@@ -6,15 +6,15 @@ baraja <- c(cartas,cartas,cartas,cartas) # Cuatro figuras por bajara (tr?boles, 
 super_baraja <- c(baraja,baraja,baraja,baraja) # Cuatro barajas mezcladas
 cartas_mayores <- cartas[2:5]
 
-simulate_hand <-  function(){
+simulate_hand <-  function(baraja){
     # Esta funci?n simula una extracci?n de dos cartas de la s?per baraja (SB)
     
     # Primera carta:
-    indice_primera <- sample(1:length(super_baraja), # Extrae al azar un entero entre 1 y la longitud de la SB 
+    indice_primera <- sample(1:length(baraja), # Extrae al azar un entero entre 1 y la longitud de la SB 
                              size=1,# (tambi?n se puede extraer m?s de un elemento) 
                              replace=F) # Con/sin reemplazo (irrelevante cuando size=1)
-    first_card <- super_baraja[indice_primera] # Extrae la primera carta...
-    super_after_first <- super_baraja[-indice_primera] # ...s?cala de la s?per baraja...
+    first_card <- baraja[indice_primera] # Extrae la primera carta...
+    super_after_first <- baraja[-indice_primera] # ...s?cala de la s?per baraja...
     # Segunda carta:
     indice_segunda <- sample(1:length(super_after_first), # ...y extrae otra posici?n de la baraja recortada.
                              size=1,
@@ -117,7 +117,7 @@ n_simulations <- 1000
 n_blackjack <- 0
 
 for (i in 1:n_simulations) {
-    hand <- simulate_hand()
+    hand <- simulate_hand(super_baraja)
     
     if (sum(hand=='A')==1 & sum(hand%in%cartas_mayores)==1) {
         n_blackjack <- n_blackjack + 1
@@ -127,7 +127,7 @@ for (i in 1:n_simulations) {
 print(n_blackjack/n_simulations)
 
 # Convirtiendo el bloque de codigo en una sola funcion
-casino_night <- function(n_hands){
+casino_night <- function(n_hands, baraja){
     # Esta funci?n simula una noche en el casino en la que se observan 'n_hands' manos
     
     # Noten que 'n_hands' ya no se define dentro de la funci?n,
@@ -137,7 +137,7 @@ casino_night <- function(n_hands){
     for(i in 1:n_hands){ # Repite las siguientes instrucciones para cada elemento 'i' del vector '1:n_hands':
         
         # a. En cada iteraci?n simula una mano (de dos cartas)
-        hand <- simulate_hand()
+        hand <- simulate_hand(baraja)
         # b. y pregunta si es blackjack.  
         if(sum(hand=='A')==1&sum(hand%in%cartas_mayores)==1){ # En caso de que la mano sea blackjack:
             # b1. Agrega uno al conteo total de blckjcks.
@@ -147,13 +147,13 @@ casino_night <- function(n_hands){
     return(n_blckjck/n_hands) # La funci?n devuelve la prpoporci?n de blackjacks.
 }
 
-print(casino_night(10000))
+print(casino_night(10000, super_baraja))
 
-# Simulando un a?o en el casino
+# Simulando un año en el casino
 nights <- c()
 
 for (i in 1:365) {
-    nights[i] <- casino_night(10000)
+    nights[i] <- casino_night(10000, super_baraja)
 }
 
 # Graficando la distribucion de las probabilidades de obtner un blackjack por cada noche de un a?o
@@ -166,42 +166,26 @@ abline(v=0.0475,col='#0000eeaa',lwd=4)
 # Ejercicio 1
 # 4 cartas que no fueron ni ases ni cartas mayores fueron retiradas de la baraja
 
-number_of_cards <- length(super_baraja) - 4
-
-simulate_hand_fewer_cards <-  function(n_cards){
-    indice_primera <- sample(1:n_cards,
-                             size=1,
-                             replace=F)
-    first_card <- super_baraja[indice_primera]
-    super_after_first <- super_baraja[-indice_primera]
-    
-    indice_segunda <- sample(1:length(super_after_first),
-                             size=1,
-                             replace=F)
-    second_card <- super_after_first[indice_segunda]
-    
-    hand <- c(first_card,second_card)
-    return(hand)
-}
-
-casino_night <- function(n_hands){
-    n_blckjck <- 0
-    for(i in 1:n_hands){
-        
-        hand <- simulate_hand_fewer_cards(number_of_cards)
-
-        if(sum(hand=='A')==1&sum(hand%in%cartas_mayores)==1){
-            n_blckjck <- n_blckjck+1
+extract_simple_cards <- function(baraja, cards_to_remove) {
+    excluded_cards <- c("A", "K", "Q", "J", "10")
+    safe_extraction <- F
+    while (!safe_extraction) {
+        extracted_cards <- sample(1:length(baraja), size = cards_to_remove, replace = F)
+        if (!any(baraja[extracted_cards] %in% excluded_cards)) {
+            safe_extraction <- T
         }
     }
-    return(n_blckjck/n_hands)
+    nueva_baraja <- baraja[-extracted_cards]
+    return(nueva_baraja)
 }
 
-nights <- c()
+baraja_ejercicio_1 <- extract_simple_cards(super_baraja, 4)
+
+nights_ejercicio_1 <- c()
 
 for (i in 1:365) {
-    nights[i] <- casino_night(10000)
+    nights_ejercicio_1[i] <- casino_night(10000, baraja_ejercicio_1)
 }
 
-hist(nights,xlim=c(0, 0.1))
+hist(nights_ejercicio_1,xlim=c(0,0.1))
 abline(v=0.049,col='#0000eeaa',lwd=4)
