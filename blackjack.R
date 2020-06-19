@@ -161,7 +161,7 @@ for (i in 1:365) {
 hist(nights,xlim=c(0,0.1))
 abline(v=0.0475,col='#0000eeaa',lwd=4)
 
-#############################################################################################
+##########################################################################
 
 # Ejercicio 1
 # 4 cartas que no fueron ni ases ni cartas mayores fueron retiradas de la baraja
@@ -187,5 +187,28 @@ for (i in 1:365) {
     nights_ejercicio_1[i] <- casino_night(10000, baraja_ejercicio_1)
 }
 
-hist(nights_ejercicio_1,xlim=c(0,0.1))
+hist(nights_ejercicio_1, xlim = c(0, 0.1))
 abline(v=0.049,col='#0000eeaa',lwd=4)
+
+##########################################################################
+# Ejercicio 2
+# Cada noche se juegan 1,000 manos en lugar de 10,0000
+# No espero un cambio significativo respecto a si se juegan 10,0000 manos, tal vez
+# solo cambien un poco los decimales, pero la probabilidad que se mostrará con mayor
+# frecuencia será cercano a los 0.0475 de la simulación con 10,000 manos. Sin embargo,
+# tendrá una mayor disperción, ya que mientras más simulaciones haya, más cercano será
+# el valor de la probabilidad a 0.0475
+
+nights_ejercicio_2 <- c()
+
+for (i in 1:365) {
+    nights_ejercicio_2[i] <- casino_night(1000, super_baraja)
+}
+hist(nights_ejercicio_2, xlim = c(0, 0.1))
+abline(v=0.0475,col='#0000eeaa',lwd=4)
+
+# Tal como se puede ver en el histograma de la distribución de probabilidad
+# la disperción fue mayor, pero el valor de probabilidad más frecuente se mantuvo cercano
+# a 0.0475. Esto por el número de eventos, teniendo infinitas simulaciones la probabilidad
+# se acerca cada vez más a 0.0475, mientras menos eventos haya, mayor será la disperción
+# de la distribución.
