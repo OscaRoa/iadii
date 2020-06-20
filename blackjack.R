@@ -212,3 +212,23 @@ abline(v=0.0475,col='#0000eeaa',lwd=4)
 # a 0.0475. Esto por el número de eventos, teniendo infinitas simulaciones la probabilidad
 # se acerca cada vez más a 0.0475, mientras menos eventos haya, mayor será la disperción
 # de la distribución.
+
+##########################################################################
+# Ejercicio 3
+# Se inicia el año con pocas manos, pero va aumentando
+
+nights_ejercicio_3 <- c()
+manos <- 50
+for (i in 1:365) {
+    nights_ejercicio_3[i] <- casino_night(manos, super_baraja)
+    manos <- manos + 50 # Hay un aumento constante de 50 manos extras por noche
+}
+hist(nights_ejercicio_3, xlim = c(0, 0.1))
+abline(v=0.0475,col='#0000eeaa',lwd=4)
+
+# La probabilidad con mayor frecuencia se mantuvo en 0.0475, sin embargo, por los pocos
+# ensayos realizados cada noche al inicio de año, la distribución presentó una dispersión
+# mayor a la de los ejemplos anteriores, por el mismo principio de que si hay menos ensayos,
+# la incertidumbre respecto a la probabilidad va a ser mayor, pero conforme avanzaron las noches
+# y cada vez había más ensayos, la incertidumbre se fue reduciendo y fue aumentando la fecuencia
+# de la probabilidad de 0.0475.
