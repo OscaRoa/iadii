@@ -232,3 +232,69 @@ abline(v=0.0475,col='#0000eeaa',lwd=4)
 # la incertidumbre respecto a la probabilidad va a ser mayor, pero conforme avanzaron las noches
 # y cada vez había más ensayos, la incertidumbre se fue reduciendo y fue aumentando la fecuencia
 # de la probabilidad de 0.0475.
+
+##########################################################################
+# Ejercicio opcional
+
+simulate_variable_cards <-  function(baraja, cards){
+    indices <- sample(1:length(baraja), size = cards, replace = F)
+    hand <- super_baraja[indices]
+    return(hand)
+}
+
+valor_mano <- function(mano, cartas_mayores) {
+    total <- 0
+    possible_blackjack <- F
+    for (card in mano) {
+        if (card %in% cartas_mayores) {
+            total <- total + 10
+        }
+        else if (card == "A") {
+            if (sum(mano=="A") == 1 & sum(mano %in% cartas_mayores) == 1) {
+                total <- total + 11
+                possible_blackjack <- T
+            }
+            else {
+                total <- total + 1
+            }
+        }
+        else {
+            total <- total + as.numeric(card)
+        }
+    }
+    
+    if (possible_blackjack & (total - 10 == 21)) {
+        print("Reajuste de A")
+        total <- total - 10
+    }
+    
+    return(total)
+}
+
+casino_night_variable_cards <- function(n_hands, baraja, n_cards, cartas_mayores){
+    n_blckjck <- 0
+    for(i in 1:n_hands){
+        
+        hand <- simulate_variable_cards(baraja, n_cards)
+        valor <- valor_mano(hand, cartas_mayores)
+        if (valor < 21) {
+            print("Menor a 21")
+        }
+        else if (valor > 21) {
+            print("Mayor a 21")
+        }
+        else {
+            print("Blackjack!")
+            n_blckjck <- n_blckjck + 1
+        }
+    }
+    return(n_blckjck/n_hands)
+}
+
+nights_opcional <- c()
+for (i in 1:365) {
+    nights_opcional[i] <- casino_night_variable_cards(10000, super_baraja, 5, cartas_mayores)
+}
+
+hist(nights_opcional, xlim = c(0, 0.1))
+abline(v=0.0475,col='#0000eeaa',lwd=4)
