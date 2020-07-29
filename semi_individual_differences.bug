@@ -1,0 +1,23 @@
+
+
+model{
+  
+  beta_prior~dbeta(1,1)
+  beta_post~dbeta(1,1)
+  
+  for(i in 1:n_subjs){
+    alpha_prior[i]~dbeta(1,1)
+    alpha_post[i]~dbeta(1,1)
+    
+    for(j in 1:n_times){
+      theta_prior[i,j] <- min(.99,exp(-alpha_prior[i]*time[j])+beta_prior)
+      theta_post[i,j] <- min(.99,exp(-alpha_post[i]*time[j])+beta_post)
+
+      n_recalled_prior[i,j]~dbin(theta_prior[i,j],n_targets)
+      n_recalled[i,j]~dbin(theta_post[i,j],n_targets)
+      n_recalled_post[i,j]~dbin(theta_post[i,j],n_targets)
+    }
+  }
+  
+}
+
