@@ -1,21 +1,19 @@
-
 model{
 
-    slope_post~dnorm(0,1000) # Remember Gaussian dispersion scales PRECISION
-    slope_prior~dnorm(0,1000) # Remember Gaussian dispersion scales PRECISION
-    intercept_post~dunif(0,0.15)
-    intercept_prior~dunif(0,0.15)
-    sd_y_post~dunif(0,0.20)
-    sd_y_prior~dunif(0,0.20)
-    tau_y_post <- 1/sd_y_post^2
-    tau_y_prior <- 1/sd_y_prior^2
-
-    for(i in 1:n_obs){
-        mu_y_post[i]<-x_simul[i]*slope_post+intercept_post
-        mu_y_prior[i]<-x_simul[i]*slope_prior+intercept_prior
-        y_simul[i]~dnorm(mu_y_post[i],tau_y_post)
-        y_pred_post[i]~dnorm(mu_y_post[i],tau_y_post)
-        y_pred_prior[i]~dnorm(mu_y_prior[i],tau_y_prior)
-    }
+slope_post~dnorm(0,1000) # T(,0.01) # Remember Gaussian dispersion scales PRECISION
+slope_prior~dnorm(0,1000) # T(,0.01) # Awas con las restricciones de valores
+intercept_post~dunif(0,0.15)
+intercept_prior~dunif(0,0.15)
+sd_y_post~dunif(0,0.20)
+sd_y_prior~dunif(0,0.20)
+tau_y_post <- 1/sd_y_post^2
+tau_y_prior <- 1/sd_y_prior^2
+for(i in 1:n_obs){
+    mu_y_post[i] <- x_simul[i]*slope_post+intercept_post
+    mu_y_prior[i] <- x_simul[i]*slope_prior+intercept_prior
+    y_simul[i]~dnorm(mu_y_post[i],tau_y_post)
+    y_pred_post[i]~dnorm(mu_y_post[i],tau_y_post)
+    y_pred_prior[i]~dnorm(mu_y_prior[i],tau_y_prior)
+}
 
 }
