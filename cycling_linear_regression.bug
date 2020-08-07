@@ -1,7 +1,7 @@
 model{
 
-slope_post~dnorm(1,1000) # T(,0.01) # Remember Gaussian dispersion scales PRECISION
-slope_prior~dnorm(1,1000) # T(,0.01) # Awas con las restricciones de valores
+slope_post~dnorm(1,1000) # T(,0.01)
+slope_prior~dnorm(1,1000) # T(,0.01)
 intercept_post~dunif(1500,2250)
 intercept_prior~dunif(1500,2250)
 sd_y_post~dunif(0,0.2)
