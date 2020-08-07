@@ -4,14 +4,14 @@ slope_post~dnorm(1,1000) # T(,0.01) # Remember Gaussian dispersion scales PRECIS
 slope_prior~dnorm(1,1000) # T(,0.01) # Awas con las restricciones de valores
 intercept_post~dunif(1500,2250)
 intercept_prior~dunif(1500,2250)
-sd_y_post~dunif(0,0.25)
-sd_y_prior~dunif(0,0.25)
+sd_y_post~dunif(0,0.2)
+sd_y_prior~dunif(0,0.2)
 tau_y_post <- 1/sd_y_post^2
 tau_y_prior <- 1/sd_y_prior^2
 for(i in 1:n_obs){
-    mu_y_post[i] <- minutes_bike[i]*slope_post+intercept_post
-    mu_y_prior[i] <- minutes_bike[i]*slope_prior+intercept_prior
-    burned_calories[i]~dnorm(mu_y_post[i],tau_y_post)
+    mu_y_post[i] <- x_obs[i]*slope_post+intercept_post
+    mu_y_prior[i] <- x_obs[i]*slope_prior+intercept_prior
+    y_obs[i]~dnorm(mu_y_post[i],tau_y_post)
     y_pred_post[i]~dnorm(mu_y_post[i],tau_y_post)
     y_pred_prior[i]~dnorm(mu_y_prior[i],tau_y_prior)
 }
