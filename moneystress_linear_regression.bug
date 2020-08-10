@@ -1,7 +1,7 @@
 model{
 
-slope_post~dunif(-5, 0)
-slope_prior~dunif(-5, 0)
+slope_post~dunif(-1, 0)
+slope_prior~dunif(-1, 0)
 intercept_post~dunif(20,80)
 intercept_prior~dunif(20,80)
 sd_y_post~dunif(0,100)
