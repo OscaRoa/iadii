@@ -1,11 +1,12 @@
 model{
 
-slope_post~dunif(-5, 0)
-slope_prior~dunif(-5, 0)
-intercept_post~dunif(20,80)
-intercept_prior~dunif(20,80)
-sd_y_post~dunif(0,100)
-sd_y_prior~dunif(0,100)
+# Main model
+slope_post~dnorm(0,10)
+slope_prior~dnorm(0,10)
+intercept_post~dnorm(0,10)
+intercept_prior~dnorm(0,10)
+sd_y_post~dnorm(0,100)T(0,)
+sd_y_prior~dnorm(0,100)T(0,)
 tau_y_post <- 1/sd_y_post^2
 tau_y_prior <- 1/sd_y_prior^2
 for(i in 1:n_obs){
@@ -14,6 +15,14 @@ for(i in 1:n_obs){
     y_obs[i]~dnorm(mu_y_post[i],tau_y_post)
     y_pred_post[i]~dnorm(mu_y_post[i],tau_y_post)
     y_pred_prior[i]~dnorm(mu_y_prior[i],tau_y_prior)
+}
+
+# Predicting at x_targets
+for(j in 1:n_targets){
+    mu_y_target_post[j] <- x_target[j]*slope_post+intercept_post
+    mu_y_target_prior[j] <- x_target[j]*slope_prior+intercept_prior
+    y_target_post[j]~dnorm(mu_y_target_post[j],tau_y_post)
+    y_target_prior[j]~dnorm(mu_y_target_prior[j],tau_y_prior)
 }
 
 }
