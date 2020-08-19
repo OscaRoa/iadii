@@ -1,0 +1,17 @@
+model{
+
+alpha_post~dnorm(0,1)
+alpha_prior~dnorm(0,1)
+x0_post~dnorm(10,1)
+x0_prior~dnorm(10,1)
+
+for(i in 1:n_obs){
+    theta_y_post[i] <- 1/(1+exp(-alpha_post*(x[i]-x0_post)))
+    theta_y_prior[i] <- 1/(1+exp(-alpha_prior*(x[i]-x0_prior)))
+    y[i]~dbern(theta_y_post[i])
+    y_postdict_post[i]~dbern(theta_y_post[i])
+    y_postdict_prior[i]~dbern(theta_y_prior[i])
+}
+
+}
+
