@@ -1,0 +1,34 @@
+
+
+model{
+  
+  # Parents of Decay Rate (alpha) 
+  mu_alpha_post~dbeta(1,1)
+  mu_alpha_prior~dbeta(1,1)
+  lambda_alpha_post~dgamma(0.001,0.001)T(0.01,)
+  lambda_alpha_prior~dgamma(0.001,0.001)T(0.01,)
+    
+  # Parents of Baseline (beta)
+  mu_beta_post~dbeta(1,1)
+  mu_beta_prior~dbeta(1,1)
+  lambda_beta_post~dgamma(0.001,0.001)T(0.01,)
+  lambda_beta_prior~dgamma(0.001,0.001)T(0.01,)
+  
+  for(i in 1:n_subjs){
+    alpha_prior[i]~dnorm(mu_alpha_prior,lambda_alpha_prior)T(0,1)
+    alpha_post[i]~dnorm(mu_alpha_post,lambda_alpha_post)T(0,1)
+    beta_prior[i]~dnorm(mu_beta_prior,lambda_beta_prior)T(0,1)
+    beta_post[i]~dnorm(mu_beta_post,lambda_beta_post)T(0,1)
+    
+    for(j in 1:n_times){
+      theta_prior[i,j] <- min(.99,exp(-alpha_prior[i]*time[j])+beta_prior[i])
+      theta_post[i,j] <- min(.99,exp(-alpha_post[i]*time[j])+beta_post[i])
+
+      n_recalled_prior[i,j]~dbin(theta_prior[i,j],n_targets)
+      n_recalled[i,j]~dbin(theta_post[i,j],n_targets)
+      n_recalled_post[i,j]~dbin(theta_post[i,j],n_targets)
+    }
+  }
+  
+}
+

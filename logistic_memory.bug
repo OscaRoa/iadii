@@ -1,0 +1,50 @@
+
+
+model{
+  
+  # Parents of Logistic Slopes 
+  mu_a_post~dnorm(0,.1)
+  mu_a_prior~dnorm(0,.1)
+  lambda_a_post~dgamma(0.001,0.001)T(0.01,)
+  lambda_a_prior~dgamma(0.001,0.001)T(0.01,)
+    
+  # Parents of Logistic Mid-Points Baseline
+  mu_b_post~dnorm(50,.01)
+  mu_b_prior~dnorm(50,.01)
+  lambda_b_post~dgamma(0.001,0.001)T(0.01,)
+  lambda_b_prior~dgamma(0.001,0.001)T(0.01,)
+
+  # Parents of Logistic Lower Asymptote
+  alpha_c_prior~dnorm(0,1)T(0.8,)
+  alpha_c_post~dnorm(0,1)T(0.8,)
+  beta_c_prior~dnorm(0,1)T(0.8,)
+  beta_c_post~dnorm(0,1)T(0.8,)
+
+
+  # Parents of Logistic Upper Asymptote
+  alpha_d_prior~dnorm(0,1)T(0.8,)
+  alpha_d_post~dnorm(0,1)T(0.8,)
+  beta_d_prior~dnorm(0,1)T(0.8,)
+  beta_d_post~dnorm(0,1)T(0.8,)
+  
+  for(i in 1:n_subjs){
+    a_prior[i]~dnorm(mu_a_prior,lambda_a_prior)
+    a_post[i]~dnorm(mu_a_post,lambda_a_post)
+    b_prior[i]~dnorm(mu_b_prior,lambda_b_prior)
+    b_post[i]~dnorm(mu_b_post,lambda_b_post)
+    c_prior[i]~dbeta(alpha_c_prior,beta_c_prior)T(0,0.5)
+    c_post[i]~dbeta(alpha_c_post,beta_c_post)T(0,0.5)
+    d_prior[i]~dbeta(alpha_d_prior,beta_d_prior)T(0.5,1)
+    d_post[i]~dbeta(alpha_d_post,beta_d_post)T(0.5,1)
+    
+    for(j in 1:n_times){
+      theta_prior[i,j] <- c_prior[i]+(d_prior[i]-c_prior[i])*(1/(1+exp(-a_prior[i]*(time[j]-b_prior[i]))))
+      theta_post[i,j] <- c_post[i]+(d_post[i]-c_post[i])*(1/(1+exp(-a_post[i]*(time[j]-b_post[i]))))
+      n_recalled_prior[i,j]~dbin(theta_prior[i,j],n_targets)
+      n_recalled[i,j]~dbin(theta_post[i,j],n_targets)
+      n_recalled_post[i,j]~dbin(theta_post[i,j],n_targets)
+    }
+  }
+  
+}
+
