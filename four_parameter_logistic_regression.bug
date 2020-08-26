@@ -1,13 +1,13 @@
 model{
 
-a_post~dnorm(0,1)
-a_prior~dnorm(0,1)
-b_post~dnorm(50,.01)
-b_prior~dnorm(50,.01)
-c_post~dunif(0,0.4)
-c_prior~dunif(0,0.4)
-d_post~dunif(0.6,1)
-d_prior~dunif(0.6,1)
+a_post~dnorm(0,0.01)
+a_prior~dnorm(0,0.01)
+b_post~dnorm(0.5,100)
+b_prior~dnorm(0.5,100)
+c_post~dunif(0,0.3)
+c_prior~dunif(0,0.3)
+d_post~dunif(0.75,1)
+d_prior~dunif(0.75,1)
 
 for(i in 1:n_obs){
     theta_y_post[i] <- c_post+(d_post-c_post)/(1+exp(-a_post*(x[i]-b_post)))
